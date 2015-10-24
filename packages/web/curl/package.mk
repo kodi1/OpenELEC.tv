@@ -17,7 +17,7 @@
 ################################################################################
 
 # Notes:
-# - build curl with OpenSSL support instead GnuTLS support to 
+# - build curl with OpenSSL support instead GnuTLS support to
 #   work around a long standing bug on Pi where https streams often hang on
 #   start. This hang is normally fatal and requires a reboot.
 #   see also http://trac.xbmc.org/ticket/14674 .
@@ -30,7 +30,7 @@ PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="http://curl.haxx.se"
-PKG_URL="http://curl.haxx.se/download/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_URL="http://www.execve.net/curl/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain zlib libressl rtmpdump"
 PKG_PRIORITY="optional"
 PKG_SECTION="web"

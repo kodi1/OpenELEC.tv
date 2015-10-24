@@ -22,7 +22,7 @@ PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.jedsoft.org/slang"
-PKG_URL="ftp://ftp.fu-berlin.de/pub/unix/misc/slang/v2.2/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_URL="http://ftp.osuosl.org/pub/blfs/conglomeration/slang/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET=""
 PKG_BUILD_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
@@ -64,5 +64,5 @@ makeinstall_target() {
   $MAKEINSTALL
 mkdir -p $INSTALL/usr/lib
   cp -P src/"$ARCH"elfobjs/libslan* $INSTALL/usr/lib
-  
+
 }

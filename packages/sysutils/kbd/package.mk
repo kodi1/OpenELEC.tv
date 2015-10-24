@@ -22,7 +22,7 @@ PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="ftp://devel.altlinux.org/legion/kbd/"
-PKG_URL="ftp://ftp.altlinux.org/pub/people/legion/kbd/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_URL="https://www.kernel.org/pub/linux/utils/kbd/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="system"
@@ -54,7 +54,7 @@ makeinstall_target() {
   install
 
   cp $PKG_DIR/config/ru-utf.map.gz $INSTALL/usr/share/kbd/keymaps/
-  
+
   mkdir -p $INSTALL/etc/profile.d
   cp $PKG_DIR/config/locale.conf $INSTALL/etc/profile.d/
 
