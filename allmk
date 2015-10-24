@@ -1,0 +1,15 @@
+# polipo
+export http_proxy="127.0.0.1:8182"
+export https_proxy=$http_proxy
+export ftp_proxy=$http_proxy
+
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+
+export PROJECT=Amlogic
+export ARCH=arm
+export DEVICE=X8HP
+time make -j amlpkg
+
+scp -r target/*.tar efi:/mnt
+
