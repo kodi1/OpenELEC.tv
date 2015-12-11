@@ -9,6 +9,8 @@ export HTTPS_PROXY=$http_proxy
 export PROJECT=Amlogic
 export ARCH=arm
 export DEVICE=X8HP
+export CONCURRENCY_MAKE_LEVEL=16
+
 time make -j amlpkg
 
 scp -r target/*.tar efi:/mnt
