@@ -17,12 +17,14 @@
 ################################################################################
 
 PKG_NAME="pvr.iptvsimple"
-PKG_VERSION="23defeb"
-PKG_REV="1"
+PKG_VERSION="f878830"
+PKG_REV="v_1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+#PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_BASE="https://github.com/kodi1/pvr.iptvsimple/releases/download/"
+PKG_URL="$PKG_BASE/$PKG_REV/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform zlib"
 PKG_PRIORITY="optional"
 PKG_SECTION=""
