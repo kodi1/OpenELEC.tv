@@ -214,7 +214,14 @@ configure_target() {
               $FFMPEG_CPU \
               $FFMPEG_FPU \
               --enable-yasm \
-              --disable-symver
+              --disable-symver \
+              --enable-encoder=mpeg4 \
+              --enable-encoder=libx264 \
+              --enable-encoder=libx264rgb \
+              --enable-encoder=libx265 \
+              --enable-encoder=libxavs \
+              --enable-encoder=libxvid
+
 }
 
 post_makeinstall_target() {
