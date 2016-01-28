@@ -1,5 +1,5 @@
 # Kernel extra targets to build
-  KERNEL_UBOOT_EXTRA_TARGET="meson8_k200b_1G_emmc_sdhc.dtd meson8_k200b_1G_emmc_sdhc.dtb meson8_k200b_1G_emmc_sdio.dtd meson8_k200b_1G_emmc_sdio.dtb meson8_k200b_2G_emmc_sdhc.dtd meson8_k200b_2G_emmc_sdhc.dtb meson8_k200b_2G_emmc_sdio.dtd meson8_k200b_2G_emmc_sdio.dtb meson8m2_n200_1G.dtd meson8m2_n200_1G.dtb meson8m2_M8S_2G.dtd meson8m2_M8S_2G.dtb meson8m2_n200_2G.dtd meson8m2_n200_2G.dtb"
+  KERNEL_UBOOT_EXTRA_TARGET="meson8_M8Nb_1G_emmc_sdhc.dtd meson8_M8Nb_1G_emmc_sdhc.dtb meson8_M8Nb_1G_emmc_sdio.dtd meson8_M8Nb_1G_emmc_sdio.dtb meson8_M8Nb_2G_emmc_sdhc.dtd meson8_M8Nb_2G_emmc_sdhc.dtb meson8_M8Nb_2G_emmc_sdio.dtd meson8_M8Nb_2G_emmc_sdio.dtb meson8m2_M8C_1G.dtd meson8m2_M8C_1G.dtb meson8m2_M8S_2G.dtd meson8m2_M8S_2G.dtb meson8m2_n200C_1G.dtd meson8m2_n200C_1G.dtb meson8m2_n200C_2G.dtd meson8m2_n200C_2G.dtb"
 
 # Build Android kernel image using mkbootimg
   BUILD_ANDROID_BOOTIMG="yes"
