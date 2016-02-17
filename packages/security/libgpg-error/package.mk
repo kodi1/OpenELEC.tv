@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="libgpg-error"
-PKG_VERSION="1.18"
+PKG_VERSION="1.21"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="http://www.gnupg.org/"
-PKG_URL="http://mirrors.dotsrc.org/gcrypt/libgpg-error/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_LICENSE="GPLv2"
+PKG_SITE="https://www.gnupg.org"
+PKG_URL="https://www.gnupg.org/ftp/gcrypt/libgpg-error/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="security"
@@ -63,5 +63,5 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/share
 
   sed -e "s:\(['= ]\)/usr:\\1$SYSROOT_PREFIX/usr:g" -i src/gpg-error-config
-  cp src/gpg-error-config $ROOT/$TOOLCHAIN/bin
+  cp src/gpg-error-config $SYSROOT_PREFIX/usr/bin
 }

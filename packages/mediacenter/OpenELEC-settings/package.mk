@@ -55,6 +55,9 @@ post_makeinstall_target() {
 
   python -Wi -t -B $ROOT/$TOOLCHAIN/lib/python2.7/compileall.py $INSTALL/usr/share/kodi/addons/service.openelec.settings/oe.py -f
   rm -rf $INSTALL/usr/share/kodi/addons/service.openelec.settings/oe.py
+
+  mkdir -p $INSTALL/usr/share/kodi/addons/service.openelec.settings/resources/skins/Default/media/icons
+  cp $PKG_DIR/icons/* $INSTALL/usr/share/kodi/addons/service.openelec.settings/resources/skins/Default/media/icons
 }
 
 post_install() {

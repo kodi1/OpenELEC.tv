@@ -25,7 +25,7 @@ diff -Nru kodi-14-085163e.orig/xbmc/utils/CPUInfo.cpp kodi-14-085163e/xbmc/utils
  #else
    m_fProcStat = fopen("/proc/stat", "r");
 -  m_fProcTemperature = fopen("/proc/acpi/thermal_zone/THM0/temperature", "r");
-+  m_fProcTemperature = fopen("/sys/class/thermal/thermal_zone1/temp", "r");  // On Amlogic
++  m_fProcTemperature = fopen("/sys/class/hwmon/hwmon1/temp1_input", "r");  // On Amlogic
 +  if (m_fProcTemperature == NULL)
 +    m_fProcTemperature = fopen("/proc/acpi/thermal_zone/THM0/temperature", "r");
    if (m_fProcTemperature == NULL)
