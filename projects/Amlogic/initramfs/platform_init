@@ -18,6 +18,7 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+
 hdmimode=720p
 
 # Parse command line arguments
@@ -34,9 +35,6 @@ for arg in $(cat /proc/cmdline); do
       ;;
     scaling_max_freq=*)
       scaling_max_freq="${arg#*=}"
-      ;;
-    bootfromsd*)
-      bootfromsd=1
       ;;
   esac
 done

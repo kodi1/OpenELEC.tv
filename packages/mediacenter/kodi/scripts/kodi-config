@@ -17,6 +17,12 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+# copy preinstall addons to user folder
+if [ ! -f $HOME/.cache/.addons ];then
+  mkdir -p $HOME/.kodi/addons
+  cp -ar /usr/share/kodi/custom_addons/* $HOME/.kodi/addons
+  touch $HOME/.cache/.addons
+fi
 
 # hack: make addon-bins executable
 # done in kodi on addon install. but just in case..

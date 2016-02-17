@@ -400,6 +400,15 @@ post_makeinstall_target() {
       cp -R $PROJECT_DIR/$PROJECT/kodi/guisettings.xml $INSTALL/usr/share/kodi/config
     fi
 
+    if [ -d $PROJECT_DIR/$PROJECT/kodi/addons ]; then
+      mkdir -p $INSTALL/usr/share/kodi/custom_addons
+      cp -ar $PROJECT_DIR/$PROJECT/kodi/addons/* $INSTALL/usr/share/kodi/custom_addons
+    fi
+
+    if [ -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/kodi/guisettings.xml ]; then
+      cp -R $PROJECT_DIR/$PROJECT/devices/$DEVICE/kodi/guisettings.xml $INSTALL/usr/share/kodi/config
+    fi
+
     if [ -f $PROJECT_DIR/$PROJECT/kodi/sources.xml ]; then
       cp -R $PROJECT_DIR/$PROJECT/kodi/sources.xml $INSTALL/usr/share/kodi/config
     fi

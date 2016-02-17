@@ -31,7 +31,7 @@ PKG_SHORTDESC="linux26: The Linux kernel 2.6 precompiled kernel binary image and
 PKG_LONGDESC="This package contains a precompiled kernel image and the modules."
 case "$LINUX" in
   amlogic)
-    PKG_VERSION="amlogic-3.10-228a108"
+    PKG_VERSION="amlogic-3.10-e6dedd5"
     PKG_URL="http://amlinux.ru/source/$PKG_NAME-$PKG_VERSION.tar.gz"
     ;;
   imx6)
@@ -154,6 +154,7 @@ make_target() {
   fi
 
   LDFLAGS="" make $KERNEL_IMAGE $KERNEL_MAKE_EXTRACMD
+
   if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
     LDFLAGS="" mkbootimg --kernel arch/arm/boot/$KERNEL_IMAGE --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
       --second "$ANDROID_BOOTIMG_SECOND" --output arch/arm/boot/boot.img

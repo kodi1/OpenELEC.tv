@@ -83,6 +83,9 @@
 # build with AirPlay support (stream videos from iDevices to KODI) (yes / no)
   KODI_AIRPLAY_SUPPORT="yes"
 
+# build with afpfs-ng support (mounting AFP shares with Kodi) (yes / no)
+  KODI_AFP_SUPPORT="yes"
+
 # build with AirTunes support (stream music from iDevices to KODI) (yes / no)
   KODI_AIRTUNES_SUPPORT="yes"
 
