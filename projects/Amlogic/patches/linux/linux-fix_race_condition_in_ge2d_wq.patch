@@ -1,0 +1,14 @@
+diff -rupN a/drivers/amlogic/display/ge2d/ge2d_wq.c b/drivers/amlogic/display/ge2d/ge2d_wq.c
+--- a/drivers/amlogic/display/ge2d/ge2d_wq.c	2016-03-29 22:18:32.962105866 +0300
++++ b/drivers/amlogic/display/ge2d/ge2d_wq.c	2016-03-29 22:21:34.442109945 +0300
+@@ -144,8 +144,9 @@
+ 	}while(pos!=head);
+ 	ge2d_manager.last_wq=wq;
+ exit:
++	spin_lock(&wq->lock);
+ 	if(ge2d_manager.ge2d_state==GE2D_STATE_REMOVING_WQ)
+-	complete(&ge2d_manager.event.process_complete);
++		complete(&ge2d_manager.event.process_complete);
+ 	ge2d_manager.ge2d_state=GE2D_STATE_IDLE;
+ 	spin_unlock(&ge2d_manager.state_lock);
+ 	return ret;	
