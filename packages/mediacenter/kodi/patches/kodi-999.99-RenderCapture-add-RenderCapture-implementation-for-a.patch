@@ -1,0 +1,277 @@
+From 246ade305f68dbe86152afb1d72bac7908a367f3 Mon Sep 17 00:00:00 2001
+From: Memphiz <memphis@machzwo.de>
+Date: Mon, 12 Jan 2015 12:04:31 +0100
+Subject: [PATCH 1/2] [RenderCapture] - add RenderCapture implementation for
+ amlogic
+
+---
+ xbmc/cores/VideoRenderers/RenderCapture.cpp | 47 ++++++++++++++++
+ xbmc/cores/VideoRenderers/RenderCapture.h   | 30 ++++++++++
+ xbmc/linux/AmVideoCap.cpp                   | 86 +++++++++++++++++++++++++++++
+ xbmc/linux/AmVideoCap.h                     | 40 ++++++++++++++
+ xbmc/linux/Makefile.in                      |  4 ++
+ 5 files changed, 207 insertions(+)
+ create mode 100644 xbmc/linux/AmVideoCap.cpp
+ create mode 100644 xbmc/linux/AmVideoCap.h
+
+diff --git a/xbmc/cores/VideoRenderers/RenderCapture.cpp b/xbmc/cores/VideoRenderers/RenderCapture.cpp
+index 0456a27..c6a4928 100644
+--- a/xbmc/cores/VideoRenderers/RenderCapture.cpp
++++ b/xbmc/cores/VideoRenderers/RenderCapture.cpp
+@@ -129,6 +129,53 @@ void CRenderCaptureDispmanX::ReadOut()
+ {
+ }
+
++#elif defined(HAS_LIBAMCODEC)
++
++CRenderCaptureAml::CRenderCaptureAml()
++{
++  m_pVideoCap = new CAmVideoCap();
++}
++
++CRenderCaptureAml::~CRenderCaptureAml()
++{
++  delete[] m_pixels;
++  delete m_pVideoCap;
++}
++
++int CRenderCaptureAml::GetCaptureFormat()
++{
++  return CAPTUREFORMAT_BGR;
++}
++
++void CRenderCaptureAml::BeginRender()
++{
++  if (m_bufferSize != m_width * m_height * 3)
++  {
++    m_bufferSize = m_width * m_height * 3;
++    delete[] m_pixels;
++    m_pixels = new uint8_t[m_bufferSize];
++  }
++
++  if (m_pVideoCap->CaptureVideoFrame(m_width, m_height, m_pixels))
++    SetState(CAPTURESTATE_DONE);
++  else
++    SetState(CAPTURESTATE_FAILED);
++}
++
++void CRenderCaptureAml::EndRender()
++{
++  m_pVideoCap->CancelCapture();
++}
++
++void* CRenderCaptureAml::GetRenderBuffer()
++{
++    return m_pixels;
++}
++
++void CRenderCaptureAml::ReadOut()
++{
++}
++
+ #elif defined(HAS_GL) || defined(HAS_GLES)
+
+ CRenderCaptureGL::CRenderCaptureGL()
+diff --git a/xbmc/cores/VideoRenderers/RenderCapture.h b/xbmc/cores/VideoRenderers/RenderCapture.h
+index 5610945..aba095a 100644
+--- a/xbmc/cores/VideoRenderers/RenderCapture.h
++++ b/xbmc/cores/VideoRenderers/RenderCapture.h
+@@ -97,6 +97,8 @@ enum ECAPTURESTATE
+
+ #define CAPTUREFORMAT_BGRA 0x01
+ #define CAPTUREFORMAT_RGBA 0x02
++#define CAPTUREFORMAT_RGB  0x03
++#define CAPTUREFORMAT_BGR  0x04
+
+ class CRenderCaptureBase
+ {
+@@ -224,6 +226,34 @@ class CRenderCapture : public CRenderCaptureDispmanX
+     CRenderCapture() {};
+ };
+
++#elif defined(HAS_LIBAMCODEC)
++#include "xbmc/linux/AmVideoCap.h"
++
++class CRenderCaptureAml : public CRenderCaptureBase
++{
++  public:
++    CRenderCaptureAml();
++    ~CRenderCaptureAml();
++
++    int   GetCaptureFormat();
++
++    void  BeginRender();
++    void  EndRender();
++    void  ReadOut();
++
++    void* GetRenderBuffer();
++  private:
++    CAmVideoCap *m_pVideoCap;
++};
++
++//used instead of typedef CRenderCaptureGL CRenderCapture
++//since C++ doesn't allow you to forward declare a typedef
++class CRenderCapture : public CRenderCaptureAml
++{
++  public:
++    CRenderCapture() {};
++};
++
+ #elif defined(HAS_GL) || defined(HAS_GLES)
+ #include "system_gl.h"
+
+diff --git a/xbmc/linux/AmVideoCap.cpp b/xbmc/linux/AmVideoCap.cpp
+new file mode 100644
+index 0000000..d41bb4b
+--- /dev/null
++++ b/xbmc/linux/AmVideoCap.cpp
+@@ -0,0 +1,86 @@
++/*
++ *      Copyright (C) 2015 Team Kodi
++ *      http://kodi.tv
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with Kodi; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include "system.h"
++#if defined(HAS_LIBAMCODEC)
++#include "AmVideoCap.h"
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++
++#include <sys/ioctl.h>
++
++// taken from linux/amlogic/amports/amvideocap.h - needs to be synced - no changes expected though
++#define AMVIDEOCAP_IOC_MAGIC  'V'
++#define AMVIDEOCAP_IOW_SET_WANTFRAME_WIDTH      _IOW(AMVIDEOCAP_IOC_MAGIC, 0x02, int)
++#define AMVIDEOCAP_IOW_SET_WANTFRAME_HEIGHT     _IOW(AMVIDEOCAP_IOC_MAGIC, 0x03, int)
++#define AMVIDEOCAP_IOW_SET_CANCEL_CAPTURE       _IOW(AMVIDEOCAP_IOC_MAGIC, 0x33, int)
++
++// capture format already defaults to GE2D_FORMAT_S24_RGB - no need to pull in all the ge2d headers :)
++
++#define CAPTURE_DEVICEPATH "/dev/amvideocap0"
++
++CAmVideoCap::CAmVideoCap()
++: m_deviceOpen(false)
++{
++
++  m_captureFd = open(CAPTURE_DEVICEPATH, O_RDWR, 0);
++  if (m_captureFd >= 0)
++  {
++    m_deviceOpen = true;
++  }
++}
++
++CAmVideoCap::~CAmVideoCap()
++{
++  CancelCapture();
++  if (m_deviceOpen == true)
++  {
++    close(m_captureFd);
++  }
++}
++
++bool CAmVideoCap::CaptureVideoFrame(int destWidth, int destHeight, unsigned char *pixels)
++{
++  if (!m_deviceOpen)
++    return false;
++
++  int buffSize = destWidth * destHeight * 3;
++  int readSize = 0;
++
++  if (m_deviceOpen == true)
++  {
++    // configure destination
++    ioctl(m_captureFd, AMVIDEOCAP_IOW_SET_WANTFRAME_WIDTH, destWidth);
++    ioctl(m_captureFd, AMVIDEOCAP_IOW_SET_WANTFRAME_HEIGHT, destHeight);
++    readSize = pread(m_captureFd, pixels, buffSize, 0);
++  }
++  return readSize == buffSize;
++}
++
++void CAmVideoCap::CancelCapture()
++{
++  if (!m_deviceOpen)
++    return;
++
++  ioctl(m_captureFd, AMVIDEOCAP_IOW_SET_CANCEL_CAPTURE, NULL);
++}
++
++#endif //defined(HAS_LIBAMCODEC)
+diff --git a/xbmc/linux/AmVideoCap.h b/xbmc/linux/AmVideoCap.h
+new file mode 100644
+index 0000000..bdc75bd
+--- /dev/null
++++ b/xbmc/linux/AmVideoCap.h
+@@ -0,0 +1,40 @@
++/*
++ *      Copyright (C) 2015 Team Kodi
++ *      http://kodi.tv
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with Kodi; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#ifndef AMVIDEOCAP_H_
++#define AMVIDEOCAP_H_
++#if defined(HAS_LIBAMCODEC)
++
++class CAmVideoCap
++{
++  public:
++    CAmVideoCap();
++    ~CAmVideoCap();
++
++    bool CaptureVideoFrame(int destWidth, int destHeight, unsigned char *pixels);
++    void CancelCapture();
++
++  private:
++    int m_captureFd;
++    bool m_deviceOpen;
++    int m_bufferSize;
++};
++#endif //defined(HAS_LIBAMCODEC)
++#endif //AMVIDEOCAP_H_
+diff --git a/xbmc/linux/Makefile.in b/xbmc/linux/Makefile.in
+index 744fd06..3c50589 100644
+--- a/xbmc/linux/Makefile.in
++++ b/xbmc/linux/Makefile.in
+@@ -20,6 +20,10 @@ SRCS += OMXClock.cpp
+ SRCS += OMXCore.cpp
+ endif
+
++ifeq (@USE_LIBAMCODEC@,1)
++SRCS += AmVideoCap.cpp
++endif
++
+ LIB = linux.a
+
+ include @abs_top_srcdir@/Makefile.include
+--
+1.9.1

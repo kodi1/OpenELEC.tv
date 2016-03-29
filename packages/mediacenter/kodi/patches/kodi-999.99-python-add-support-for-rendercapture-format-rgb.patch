@@ -1,0 +1,41 @@
+From 7cd3ea08e2ddc013c477a18cc27e69831f6cd256 Mon Sep 17 00:00:00 2001
+From: Memphiz <memphis@machzwo.de>
+Date: Mon, 12 Jan 2015 12:04:58 +0100
+Subject: [PATCH 2/2] [python] - add support for rendercapture format rgb
+
+---
+ xbmc/interfaces/legacy/RenderCapture.h | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/xbmc/interfaces/legacy/RenderCapture.h b/xbmc/interfaces/legacy/RenderCapture.h
+index 06f02bb..ae3005b 100644
+--- a/xbmc/interfaces/legacy/RenderCapture.h
++++ b/xbmc/interfaces/legacy/RenderCapture.h
+@@ -69,12 +69,22 @@ namespace XBMCAddon
+       inline float getAspectRatio() { return g_renderManager.GetAspectRatio(); }
+
+       /**
+-       * getImageFormat() -- returns format of captured image: 'BGRA' or 'RGBA'.
++       * getImageFormat() -- returns format of captured image: 'BGRA' or 'RGBA' or 'RGB'.
+        */
+       inline const char* getImageFormat()
+       {
+-        return m_capture->GetCaptureFormat() == CAPTUREFORMAT_BGRA ? "BGRA" :
+-          (m_capture->GetCaptureFormat() == CAPTUREFORMAT_RGBA ? "RGBA" : NULL);
++        switch(m_capture->GetCaptureFormat())
++        {
++          case CAPTUREFORMAT_BGRA:
++            return "BGRA";
++          case CAPTUREFORMAT_RGBA:
++            return "RGBA";
++          case CAPTUREFORMAT_RGB:
++            return "RGB";
++          case CAPTUREFORMAT_BGR:
++            return "BGR";
++        }
++        return NULL;
+       }
+
+       // RenderCapture_GetImage
+--
+1.9.1
