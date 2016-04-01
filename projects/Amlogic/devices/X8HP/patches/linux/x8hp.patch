@@ -2,35 +2,6 @@ diff --git a/arch/arm/boot/dts/amlogic/meson8m2_n200_2G.dtd b/arch/arm/boot/dts/
 index 3c6f729..49349d5
 --- a/arch/arm/boot/dts/amlogic/meson8m2_n200_2G.dtd
 +++ b/arch/arm/boot/dts/amlogic/meson8m2_n200_2G.dtd
-@@ -280,7 +280,7 @@ void root_func(){
-         status = "ok";
-         share-memory-name = "ppmgr0";
-         share-memory-offset = <0>;
--        share-memory-size = <0x01000000>; //16M
-+        share-memory-size = <0x02000000>; //32M
-     };
- /// ***************************************************************************************
- ///	-	DISP&MM-Vout
-@@ -292,7 +292,6 @@ void root_func(){
-		dev_name = "mesonvout";
-		status = "okay";
-	};
--/*
- /// ***************************************************************************************
- ///	-	DISP&MM-A/V Amvideocap
- //$$ MODULE = "DISP&MM-Amvideocap"
-@@ -303,10 +302,9 @@ void root_func(){
-		compatible = "amlogic,amvideocap";
-		dev_name = "amvideocap.0";
-		status = "okay";
--		reserve-memory = <0x00600000>;//1920*1088*3
-+		reserve-memory = <0x00800000>;//1920*1088*4
-		reserve-iomap = "true";
-	};
--*/
- /// ***************************************************************************************
- ///	-	RTC
- //$$ MODULE="RTC"
 @@ -314,7 +312,7 @@ void root_func(){
  //$$ L2 PROP_STR = "status"
      rtc{
@@ -199,37 +170,3 @@ index 3c6f729..49349d5
  			amlogic,clrmask = <1 0xCCE41
  								4 0x2000000
  								7 0x20000000
-@@ -1889,24 +1861,15 @@ sdio{
- 		};
- 
- 	};
--/// ***************************************************************************************
--///	-	Ethernet
--//$$ MODULE="Ethernet"
--//$$ DEVICE="meson-eth"
--//$$ L2 PROP_STR = "status"
--    meson-eth{
--		compatible = "amlogic,meson-eth";
--		dev_name = "meson-eth";
--		status = "okay";
--		ethbaseaddr = <0xfe0c0000>;
--		interruptnum = <40>;
--                phy_interface = <1>;
--                new_maclogic = <1>;
--                reset_pin_enable = <0>;
--                reset_pin = "GPIOH_4";
--                reset_delay = <100>;
--	};
--
-+	       ethmac: ethernet@0xc9410000{
-+				compatible = "amlogic,meson8m2-rgmii-dwmac", "snps,dwmac";
-+               reg = <0xc9410000 0x10000
-+		       0xc1108108 0x4>;
-+               interrupts = <0 8 1>;
-+                interrupt-names = "macirq";
-+		      clocks = "clk81";
-+               clock-names = "stmmaceth";
-+       };
- /// ***************************************************************************************
- ///	-	DVB
- //$$ MODULE="DVB"
